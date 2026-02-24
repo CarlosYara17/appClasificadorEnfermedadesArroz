@@ -7,45 +7,35 @@ import gdown
 
 app = Flask(__name__)
 
-# ==============================
-# 📁 CONFIGURACIÓN DE CARPETAS
-# ==============================
+# ===============================
+# CONFIGURACIÓN
+# ===============================
 
 UPLOAD_FOLDER = "static/uploads"
-MODEL_FOLDER = "modelo"
-MODEL_PATH = os.path.join(MODEL_FOLDER, "modelo.keras")
-
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# Crear carpetas si no existen
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs("modelo", exist_ok=True)
 
-if not os.path.exists(MODEL_FOLDER):
-    os.makedirs(MODEL_FOLDER)
+# Ruta donde se guardará el modelo
+MODEL_PATH = "modelo/modelo_produccion.h5"
 
-# ==============================
-# 🔗 ENLACE GOOGLE DRIVE
-# ==============================
-
-DRIVE_LINK = "https://drive.google.com/uc?id=16tJjVLj3ZkJ3uH2WsFUfKBvuFPUe0gGn"
+# 🔥 LINK DIRECTO DE DRIVE
+DRIVE_URL = "https://drive.google.com/uc?export=download&id=1OHBt_s3C-8AIoydj743M15ROWdMSRLpN"
 
 # Descargar modelo si no existe
 if not os.path.exists(MODEL_PATH):
     print("Descargando modelo desde Google Drive...")
-    gdown.download(DRIVE_LINK, MODEL_PATH, quiet=False)
+    gdown.download(DRIVE_URL, MODEL_PATH, quiet=False)
 
-# ==============================
-# 🧠 CARGAR MODELO
-# ==============================
-
+# Cargar modelo
 print("Cargando modelo...")
 model = tf.keras.models.load_model(MODEL_PATH)
-print("Modelo cargado correctamente.")
+print("Modelo cargado correctamente")
 
-# ==============================
-# 📌 CLASES
-# ==============================
+# ===============================
+# CLASES DEL MODELO
+# ===============================
 
 class_names = [
     "Bacterial Leaf Blight",
@@ -58,34 +48,26 @@ class_names = [
     "Rice Hispa"
 ]
 
-# ==============================
-# 📝 DESCRIPCIONES
-# ==============================
-
-descriptions = {
-    "Bacterial Leaf Blight": "Enfermedad bacteriana que provoca marchitez y manchas amarillentas en los bordes de la hoja. Puede reducir significativamente el rendimiento del cultivo.",
-    
-    "Brown Spot": "Enfermedad fúngica caracterizada por manchas marrones circulares en las hojas. Es común en suelos con deficiencia nutricional.",
-    
-    "Healthy Rice Leaf": "La hoja se encuentra en estado saludable, sin presencia de lesiones, manchas o signos de infección.",
-    
-    "Leaf Blast": "Enfermedad causada por el hongo Magnaporthe oryzae que genera lesiones en forma de diamante en las hojas.",
-    
-    "Leaf scald": "Produce manchas alargadas y blanquecinas que pueden expandirse y secar grandes áreas de la hoja.",
-    
-    "Narrow Brown Leaf Spot": "Se caracteriza por manchas delgadas y marrones distribuidas en la superficie de la hoja.",
-    
-    "Sheath Blight": "Infección fúngica que afecta la vaina de la planta, generando lesiones ovaladas y disminuyendo la productividad.",
-    
-    "Rice Hispa": "Plaga causada por insectos que raspan la superficie de la hoja, provocando líneas blancas y debilitamiento de la planta."
-}
-
-# Tamaño esperado por el modelo
 IMG_SIZE = 224
 
-# ==============================
-# 🌐 RUTA PRINCIPAL
-# ==============================
+# ===============================
+# DESCRIPCIONES
+# ===============================
+
+descriptions = {
+    "Bacterial Leaf Blight": "Enfermedad bacteriana que provoca marchitez y secado progresivo de las hojas.",
+    "Brown Spot": "Causada por hongos, genera manchas marrones circulares en la hoja.",
+    "Healthy Rice Leaf": "Hoja sana sin signos visibles de enfermedad.",
+    "Leaf Blast": "Enfermedad fúngica que produce lesiones en forma de diamante.",
+    "Leaf scald": "Provoca decoloración y apariencia de hoja quemada.",
+    "Narrow Brown Leaf Spot": "Genera manchas alargadas y estrechas de color marrón.",
+    "Sheath Blight": "Enfermedad fúngica que afecta la vaina y reduce rendimiento.",
+    "Rice Hispa": "Plaga que daña la superficie de la hoja dejando líneas blancas."
+}
+
+# ===============================
+# RUTA PRINCIPAL
+# ===============================
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -101,32 +83,30 @@ def index():
             file.save(filepath)
             image_path = filepath
 
-            # 🔄 Preprocesamiento
             img = image.load_img(filepath, target_size=(IMG_SIZE, IMG_SIZE))
             img_array = image.img_to_array(img)
             img_array = np.expand_dims(img_array, axis=0)
             img_array = img_array / 255.0
 
-            # 🔍 Predicción
             predictions = model.predict(img_array)
             class_index = np.argmax(predictions)
             confidence = np.max(predictions)
 
             predicted_class = class_names[class_index]
+
             prediction = f"{predicted_class} ({confidence*100:.2f}%)"
-            description = descriptions[predicted_class]
+            description = descriptions.get(predicted_class)
 
     return render_template(
         "index.html",
         prediction=prediction,
-        image_path=image_path,
-        description=description
+        description=description,
+        image_path=image_path
     )
 
-# ==============================
-# 🚀 INICIAR APP
-# ==============================
+# ===============================
+# PRODUCCIÓN
+# ===============================
 
 if __name__ == "__main__":
-
-    app.run(debug=True)
+    app.run()
