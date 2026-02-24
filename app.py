@@ -3,21 +3,50 @@ import tensorflow as tf
 import numpy as np
 import os
 from tensorflow.keras.preprocessing import image
+import gdown
 
 app = Flask(__name__)
 
-# 📁 Carpeta para guardar imágenes
+# ==============================
+# 📁 CONFIGURACIÓN DE CARPETAS
+# ==============================
+
 UPLOAD_FOLDER = "static/uploads"
+MODEL_FOLDER = "modelo"
+MODEL_PATH = os.path.join(MODEL_FOLDER, "inception_best.keras")
+
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# Crear carpeta si no existe
+# Crear carpetas si no existen
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-# 🔥 Cargar modelo entrenado
-model = tf.keras.models.load_model("modelo/modelo.keras")
+if not os.path.exists(MODEL_FOLDER):
+    os.makedirs(MODEL_FOLDER)
 
-# 📌 Clases del modelo
+# ==============================
+# 🔗 ENLACE GOOGLE DRIVE
+# ==============================
+
+DRIVE_LINK = "https://drive.google.com/uc?id=16tJjVLj3ZkJ3uH2WsFUfKBvuFPUe0gGn"
+
+# Descargar modelo si no existe
+if not os.path.exists(MODEL_PATH):
+    print("Descargando modelo desde Google Drive...")
+    gdown.download(DRIVE_LINK, MODEL_PATH, quiet=False)
+
+# ==============================
+# 🧠 CARGAR MODELO
+# ==============================
+
+print("Cargando modelo...")
+model = tf.keras.models.load_model(MODEL_PATH)
+print("Modelo cargado correctamente.")
+
+# ==============================
+# 📌 CLASES
+# ==============================
+
 class_names = [
     "Bacterial Leaf Blight",
     "Brown Spot",
@@ -29,7 +58,10 @@ class_names = [
     "Rice Hispa"
 ]
 
-# 📝 Descripciones de cada enfermedad
+# ==============================
+# 📝 DESCRIPCIONES
+# ==============================
+
 descriptions = {
     "Bacterial Leaf Blight": "Enfermedad bacteriana que provoca marchitez y manchas amarillentas en los bordes de la hoja. Puede reducir significativamente el rendimiento del cultivo.",
     
@@ -48,9 +80,12 @@ descriptions = {
     "Rice Hispa": "Plaga causada por insectos que raspan la superficie de la hoja, provocando líneas blancas y debilitamiento de la planta."
 }
 
-# 📐 Tamaño esperado por el modelo
+# Tamaño esperado por el modelo
 IMG_SIZE = 224
 
+# ==============================
+# 🌐 RUTA PRINCIPAL
+# ==============================
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -70,7 +105,7 @@ def index():
             img = image.load_img(filepath, target_size=(IMG_SIZE, IMG_SIZE))
             img_array = image.img_to_array(img)
             img_array = np.expand_dims(img_array, axis=0)
-            img_array = img_array / 255.0  # Normalización
+            img_array = img_array / 255.0
 
             # 🔍 Predicción
             predictions = model.predict(img_array)
@@ -88,6 +123,9 @@ def index():
         description=description
     )
 
+# ==============================
+# 🚀 INICIAR APP
+# ==============================
 
 if __name__ == "__main__":
     app.run(debug=True)
