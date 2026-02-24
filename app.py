@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 UPLOAD_FOLDER = "static/uploads"
 MODEL_FOLDER = "modelo"
-MODEL_PATH = os.path.join(MODEL_FOLDER, "inception_best.keras")
+MODEL_PATH = os.path.join(MODEL_FOLDER, "modelo.keras")
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
@@ -128,4 +128,5 @@ def index():
 # ==============================
 
 if __name__ == "__main__":
+
     app.run(debug=True)
