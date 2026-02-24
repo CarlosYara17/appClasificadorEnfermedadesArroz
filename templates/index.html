@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detector Inteligente de Enfermedades en Arroz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #2e7d32, #81c784);
+            color: #333;
+        }
+
+        header {
+            background-color: rgba(0,0,0,0.2);
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        header h1 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .container {
+            background: white;
+            width: 90%;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        input[type="file"] {
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #1b5e20;
+        }
+
+        img {
+            margin-top: 25px;
+            width: 300px;
+            border-radius: 12px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .result-box {
+            margin-top: 30px;
+            padding: 25px;
+            background-color: #f1f8e9;
+            border-left: 6px solid #2e7d32;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .result-box h2 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+
+        .confidence {
+            font-weight: bold;
+            color: #1b5e20;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Sistema Inteligente de Diagnóstico en Cultivos de Arroz</h1>
+    <p>Clasificación automática mediante Deep Learning</p>
+</header>
+
+<div class="container">
+
+    <h2>Sube una imagen de la hoja</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <br>
+        <button type="submit">Analizar Imagen</button>
+    </form>
+
+    {% if image_path %}
+        <img src="{{ image_path }}">
+    {% endif %}
+
+    {% if prediction %}
+        <div class="result-box">
+            <h2>Resultado del Análisis</h2>
+            <p><strong>Diagnóstico:</strong> {{ prediction }}</p>
+            <p><strong>Descripción:</strong> {{ description }}</p>
+        </div>
+    {% endif %}
+
+</div>
+
+<footer>
+    Proyecto de Clasificación de Enfermedades en Arroz | Deep Learning 
+</footer>
+
+</body>
+</html>
