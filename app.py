@@ -49,21 +49,21 @@ class_names = [
 IMG_SIZE = 224
 
 descriptions = {
-    "Bacterial Leaf Blight": "Enfermedad bacteriana que provoca marchitez y secado progresivo de las hojas.",
-    "Brown Spot": "Causada por hongos, genera manchas marrones circulares.",
+    "Bacterial Leaf Blight": "Provocado por la bacteria Xanthomonas oryzae pv. oryzae, este patógeno genera la decoloración progresiva del borde de las hojas, que inicia como rayas acuosas amarillentas y se extiende hacia el centro.",
+    "Brown Spot": "Causada por el hongo Bipolaris oryzae, se aprecia en forma de manchas redondeadas de color pardo oscuro con centros más claros. Es común en suelos pobres en nutrientes, especialmente con deficiencia de nitrógeno, y puede afectar tanto las hojas como las vainas, reduciendo la fotosíntesis y la calidad del grano.",
     "Healthy Rice Leaf": "Hoja sana sin signos visibles.",
-    "Leaf Blast": "Lesiones en forma de diamante.",
-    "Leaf scald": "Apariencia de hoja quemada.",
-    "Narrow Brown Leaf Spot": "Manchas marrones alargadas.",
-    "Sheath Blight": "Enfermedad fúngica que afecta la vaina.",
-    "Rice Hispa": "Plaga que deja líneas blancas."
+    "Leaf Blast": "Causado por el hongo Magnaporthe oryzae (sin. Pyricularia oryzae), es una de las enfermedades más destructivas del arroz. Se caracteriza por la aparición de lesiones scon centros grises y bordes marrones.",
+    "Leaf scald": "Originada por el hongo Microdochium oryzae, esta enfermedad produce lesiones irregulares de color pardo rojizo con bordes amarillos que dan la apariencia de hojas “escaldadas”.",
+    "Narrow Brown Leaf Spot": "Provocada por el hongo Cercospora oryzae, se distingue por generar manchas alargadas y angostas de color pardo oscuro, generalmente paralelas a las nervaduras de la hoja.",
+    "Sheath Blight": "Producido por el hongo Rhizoctonia solani, afecta principalmente las vainas de las hojas cercanas al agua. Se caracteriza por manchas ovaladas o irregulares de color gris pardo con bordes oscuros, que se expanden rápidamente bajo condiciones cálidas y húmedas.",
+    "Rice Hispa": "Causada por el insecto Dicladispa armigera, conocido como “hispa del arroz”, esta plaga raspa el tejido foliar, dejando líneas paralelas blanquecinas en la superficie."
 }
 
 # ===============================
 # INTERFAZ
 # ===============================
 
-st.title("🌾 Clasificador de Enfermedades del Arroz")
+st.title("Clasificador de Enfermedades del Arroz")
 
 uploaded_file = st.file_uploader("Sube una imagen de la hoja", type=["jpg","png","jpeg"])
 
@@ -85,3 +85,4 @@ if uploaded_file:
     st.success(f"Predicción: {predicted_class}")
     st.write(f"Confianza: {confidence*100:.2f}%")
     st.info(descriptions[predicted_class])
+
